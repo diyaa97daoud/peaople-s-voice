@@ -2,7 +2,7 @@
    Edit the sections marked EDIT. Everything else can stay as it is. */
 window.VOX = (() => {
   /* ---------- EDIT: question, channel, threshold ---------- */
-  const QUESTION = "What do you think about vinho verde?";
+  const QUESTION = "What do you think about T4EU Braga 2026?";
   // The channel name is the only "password": anyone who knows it can read and send. Change it for each event.
   const TOPIC = "t4eu";
   // A critique reaches the Duke when it is mentioned MORE than this many times. Lower it for a small room.
@@ -78,103 +78,103 @@ window.VOX = (() => {
      Keep every list the same length (7 / 7 / 4 options each / 3 / 4) and keep the codes: they are what the strings mean. */
   const FIELDS = ["Who", "Opinion on", "Detail", "How much", "Feeling"];
   const STATUS = [
-    { code: "01010", label: "Student", icon: "cap" },
-    { code: "10001", label: "Teacher or researcher", icon: "book" },
-    { code: "00011", label: "Software or engineering", icon: "code" },
-    { code: "11000", label: "Philosophy or humanities", icon: "quill" },
-    { code: "00101", label: "I live in the Minho", icon: "pin" },
-    { code: "01100", label: "Visiting from abroad", icon: "plane" },
+    { code: "01010", label: "Bachelor or master student", icon: "cap" },
+    { code: "10001", label: "PhD student or researcher", icon: "book" },
+    { code: "00011", label: "Teacher or university staff", icon: "quill" },
+    { code: "11000", label: "Mentor, speaker or jury", icon: "mic" },
+    { code: "00101", label: "Organiser or host team", icon: "pin" },
+    { code: "01100", label: "Guest from a partner university", icon: "plane" },
     { code: "10100", label: "Prefer not to say", icon: "shield" },
   ];
   const SUBCODES = ["10001", "01100", "11000", "00011"]; // codes of the four details under any subject
   const SUBJECTS = [
     {
       code: "00101",
-      label: "Taste",
-      icon: "drop",
+      label: "The challenge",
+      icon: "bulb",
       subs: [
-        "Fresh and crisp",
-        "A light natural fizz",
-        "Too sour for me",
-        "Too light, little character",
+        "Clear and inspiring brief",
+        "Real and relevant problem",
+        "Too vague to get started",
+        "Too much for the time given",
       ],
     },
     {
       code: "11000",
-      label: "Price and value",
-      icon: "coin",
+      label: "Teamwork",
+      icon: "people",
       subs: [
-        "Great value for money",
-        "So cheap I doubt it",
-        "Too expensive abroad",
-        "Hard to pick a good bottle",
+        "A great mix of disciplines",
+        "I learned from other cultures",
+        "Work was shared unevenly",
+        "Language or culture barriers",
       ],
     },
     {
       code: "01010",
-      label: "Origin and tradition",
-      icon: "leaf",
+      label: "Talks and workshops",
+      icon: "screen",
       subs: [
-        "Proud of the Minho",
-        "Old vineyards, old ways",
-        "Many brands taste alike",
-        "Unknown outside Portugal",
+        "Inspiring speakers",
+        "Useful hands-on sessions",
+        "Too many, too long",
+        "Off-topic for our challenge",
       ],
     },
     {
       code: "00011",
-      label: "Food pairing",
-      icon: "fork",
+      label: "Mentoring and support",
+      icon: "chat",
       subs: [
-        "Seafood and fish",
-        "Grilled traditional dishes",
-        "Light starters and salads",
-        "Never sure what to pair",
+        "Mentors were there for us",
+        "Feedback moved us forward",
+        "Hard to reach a mentor",
+        "Conflicting advice",
       ],
     },
     {
       code: "10100",
-      label: "Occasions",
-      icon: "sun",
+      label: "Organisation and schedule",
+      icon: "clock",
       subs: [
-        "Summer on a terrace",
-        "Family lunch",
-        "With friends, at a party",
-        "Nothing special",
+        "Well planned and clear",
+        "Good balance of work and rest",
+        "Last-minute changes",
+        "Too little free time",
       ],
     },
     {
       code: "10001",
-      label: "Health and alcohol",
-      icon: "heart",
+      label: "Venues, food and housing",
+      icon: "fork",
       subs: [
-        "Light and low in alcohol",
-        "A headache next day",
-        "Sweetness and sugar",
-        "I would rather drink less",
+        "Good rooms to work in",
+        "Good food and coffee breaks",
+        "Housing was far or poor",
+        "Weak wifi or equipment",
       ],
     },
     {
       code: "01100",
-      label: "Image and marketing",
-      icon: "flag",
+      label: "Braga and social life",
+      icon: "sun",
       subs: [
-        "A symbol of Portugal",
-        "A tourist drink only",
-        "Needs better marketing",
-        "Deserves more export",
+        "A beautiful city to discover",
+        "Great evenings together",
+        "Too little time to explore",
+        "I felt left out of the group",
       ],
     },
   ];
   const GRAVITY = [
-    { code: "00101", label: "I · A small matter" },
+    { code: "00101", label: "I · A small detail" },
     { code: "01010", label: "II · It matters to me" },
-    { code: "10100", label: "III · It matters deeply" },
+    { code: "10100", label: "III · It shaped my whole week" },
   ];
   const FEELING = [
-    { code: "01100", label: "Delight" },
-    { code: "00011", label: "Pride" },
-    { code: "10001", label: "Nostalgia" },
+    { code: "01100", label: "Inspiration" },
+    { code: "00011", label: "Gratitude" },
+    { code: "10001", label: "Frustration" },
     { code: "00101", label: "Disappointment" },
   ];
 
@@ -194,20 +194,20 @@ window.VOX = (() => {
   const ICONS = {
     cap: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1 3 3 6 3s6-2 6-3v-5"/>',
     book: '<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/>',
-    code: '<path d="M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6"/>',
     quill:
       '<path d="M4 20C8 12 14 6 20 4c-1 6-6 12-14 14"/><path d="M4 20l6-6"/>',
     pin: '<path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
     plane: '<path d="M2 14l20-8-6 16-4-6z"/>',
     shield: '<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/>',
-    drop: '<path d="M12 3s6 7 6 11a6 6 0 01-12 0c0-4 6-11 6-11z"/>',
-    coin: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/>',
-    leaf: '<path d="M5 19C5 10 10 5 20 4c0 9-4 15-13 15"/><path d="M5 19l8-8"/>',
+    bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/>',
+    people:
+      '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-4 3-6 6-6s6 2 6 6M15 14.5c3 0 6 1.5 6 5"/>',
+    screen: '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M12 16v4M8 20h8"/>',
+    chat: '<path d="M4 5h16v10H9l-5 4z"/>',
+    clock: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
     fork: '<path d="M7 3v8M5 3v5a2 2 0 004 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/>',
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>',
-    heart:
-      '<path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/>',
-    flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
   };
   const ic = (n) =>
     ICONS[n]

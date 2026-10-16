@@ -1,6 +1,6 @@
 # La Corda live
 
-Attendees scan a QR code, answer "What do you think about vinho verde?" with string pulls on their phones, and you decode the room's answers on a projector.
+Attendees scan a QR code, answer "What do you think about T4EU Braga 2026?" with string pulls on their phones, and you decode the room's answers on a projector.
 
 ## Files
 
