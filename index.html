@@ -88,7 +88,10 @@ button:disabled{opacity:.5;cursor:default}
 .card.sel{border:2px solid var(--accent);background:var(--accent-soft);padding:9px}
 .card .ic{width:26px;height:26px;color:var(--accent)}
 .card .nm{line-height:1.15}
-.bar{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom, 0px));background:var(--panel);border:1px solid var(--accent);border-radius:4px;padding:10px;display:grid;gap:8px;box-shadow:0 2px 10px #00000030}
+/* the next action stays on screen: sticky inside .wrap, which spans the whole page */
+.dock{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom, 0px));z-index:2}
+.dock:empty{display:none}
+.bar{background:var(--panel);border:1px solid var(--accent);border-radius:4px;padding:10px;display:grid;gap:8px;box-shadow:0 2px 10px #00000030}
 .bar .sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 .line{background:var(--log-bg);color:var(--log-ink);border-radius:3px;padding:10px 12px;font-family:var(--mono);font-size:.86rem;word-spacing:.4em;overflow-wrap:anywhere}
@@ -125,6 +128,7 @@ summary{cursor:pointer;font-family:var(--mono);font-size:.82rem;color:var(--dim)
   <div><button class="btn" id="eyes" aria-pressed="false">Show the crossing inside the wall</button></div>
 
   <div class="stage" id="stage"></div>
+  <div class="dock" id="dock"></div>
 </div>
 
 <script src="vox.js"></script>
@@ -217,25 +221,30 @@ function resultHTML(){
 function render(){
   $('#prog').innerHTML=[0,1,2,3,4].map(i=>`<i class="${i<sent.length||phase==='done'?'f':''}${phase==='compose'&&i===sent.length?' c':''}"></i>`).join('');
   $('#progt').textContent=phase==='intro'?'Not started':phase==='done'?'Message sent':sent.length<5?`Field ${sent.length+1} of 5`:'All five fields chosen';
-  let h='';
-  if(phase==='intro')h=`<h2>Send your opinion</h2><p>Answer the Duke’s question in five small choices. You pull two strings for each one, the way a citizen would. The messenger next door hears only bells.</p><button class="btn primary big" data-act="pullall" ${busy?'disabled':''}>Pull all five strings to start</button>`;
-  else if(phase==='compose'&&sent.length===5)h=`<h2>Ready to send</h2><p>All five fields are in. Pull all five strings to end the message.</p><button class="btn primary big" data-act="pullall" ${busy?'disabled':''}>Pull all five strings to send</button>`;
+  let h='',d='';
+  if(phase==='intro'){h=`<h2>Send your opinion</h2><p>Answer the Duke’s question in five small choices. You pull two strings for each one, the way a citizen would. The messenger next door hears only bells.</p>`;
+    d=`<div class="bar"><button class="btn primary big" data-act="pullall" ${busy?'disabled':''}>Pull all five strings to start</button></div>`}
+  else if(phase==='compose'&&sent.length===5){h=`<h2>Ready to send</h2><p>All five fields are in. Pull all five strings to end the message.</p>`;
+    d=`<div class="bar"><button class="btn primary big" data-act="pullall" ${busy?'disabled':''}>Pull all five strings to send</button></div>`}
   else if(phase==='compose'){
     const o=options();
-    h=`<h2>${o.title}</h2><div class="cards">${o.opts.map(x=>`<button class="card${hint===x.code?' sel':''}" data-act="card" data-code="${x.code}" aria-pressed="${hint===x.code}" ${busy?'disabled':''}>${x.icon?ic(x.icon):''}<span class="nm">${x.label}</span><span>${dots(x.code)}</span></button>`).join('')}</div>
-    <div class="bar">${hint?`<div class="sel">${dots(hint)}<span>Pull <b>${names(hint)}</b></span></div><button class="btn primary big" data-act="pullsel" ${busy?'disabled':''}>Pull both strings</button><span class="sub" style="font-size:.85rem">Or tap the two glowing handles above.</span>`:`<span class="sub">Choose a picture. Then you pull its two strings.</span>`}
+    h=`<h2>${o.title}</h2><div class="cards">${o.opts.map(x=>`<button class="card${hint===x.code?' sel':''}" data-act="card" data-code="${x.code}" aria-pressed="${hint===x.code}" ${busy?'disabled':''}>${x.icon?ic(x.icon):''}<span class="nm">${x.label}</span><span>${dots(x.code)}</span></button>`).join('')}</div>`;
+    d=`<div class="bar">${hint?`<div class="sel">${dots(hint)}<span>Pull <b>${names(hint)}</b></span></div><button class="btn primary big" data-act="pullsel" ${busy?'disabled':''}>Pull both strings</button><span class="sub" style="font-size:.85rem">Or tap the two glowing handles above.</span>`:`<span class="sub">Choose a picture. Then you pull its two strings.</span>`}
     <button class="btn quiet" data-act="cancel" ${busy?'disabled':''}>Cancel this message (pull all five)</button></div>`;
   }else h=resultHTML();
   $('#stage').innerHTML=h;
+  $('#dock').innerHTML=d;
 }
-$('#stage').addEventListener('click',e=>{
+const act=e=>{
   const b=e.target.closest('[data-act]');if(!b||busy)return;const a=b.dataset.act;
   if(a==='card'){const c=b.dataset.code;hint=hint===c?null:c;grabbed=[];paintHandles();render();say(hint?`Pull the glowing strings: <b>${names(hint)}</b>. Tap both handles, or use the button.`:'Pick a picture, then pull its two strings.')}
   else if(a==='pullsel'&&hint)pull(hint);
   else if(a==='pullall'||a==='cancel')pull(ALL);
   else if(a==='retry')deliver();
   else if(a==='again'){phase='intro';sent=[];result=null;hint=null;net='idle';render();say('Pull all five strings to open a new line.');look('#appwrap','nearest')}
-});
+};
+$('#stage').addEventListener('click',act);
+$('#dock').addEventListener('click',act);
 $('#eyes').addEventListener('click',e=>{const v=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',v);$('#wall').style.opacity=v?.08:1;e.currentTarget.textContent=v?'Hide the crossing':'Show the crossing inside the wall'});
 
 build();render();paintHandles();
