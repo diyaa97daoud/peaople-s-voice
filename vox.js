@@ -4,7 +4,7 @@ window.VOX = (() => {
   /* ---------- EDIT: question, channel, threshold ---------- */
   const QUESTION = "What do you think about T4EU Braga 2026?";
   // The channel name is the only "password": anyone who knows it can read and send. Change it for each event.
-  const TOPIC = "t4eu";
+  const TOPIC = "t4eu-poll";
   // A critique reaches the Duke when it is mentioned MORE than this many times. Lower it for a small room.
   const THRESHOLD = 5;
 
@@ -203,7 +203,8 @@ window.VOX = (() => {
     bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/>',
     people:
       '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-4 3-6 6-6s6 2 6 6M15 14.5c3 0 6 1.5 6 5"/>',
-    screen: '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M12 16v4M8 20h8"/>',
+    screen:
+      '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M12 16v4M8 20h8"/>',
     chat: '<path d="M4 5h16v10H9l-5 4z"/>',
     clock: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
     fork: '<path d="M7 3v8M5 3v5a2 2 0 004 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/>',
