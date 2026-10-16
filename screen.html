@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>La Corda: the Duke's office</title>
+<title>T4EU Braga 2026: live feedback</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
-/* Presenter screen: QR and messenger's log on the left, the Duke's office (decoded) on the right. */
+/* Presenter screen: QR and encoded answers on the left, decoded results on the right. */
 :root{
   color-scheme:light;
   --bg:#f3f2ee; --panel:#ffffff; --panel2:#f7f5f0; --line:#ddd8cd;
@@ -70,11 +70,11 @@ header .q{font-family:var(--display);font-size:1.8rem;line-height:1.1;flex:1 1 3
 <div class="wrap">
   <header>
     <div>
-      <h1>La Corda</h1>
-      <p class="sub">The Duke asks</p>
+      <h1>T4EU Braga 2026</h1>
+      <p class="sub">Live feedback</p>
     </div>
     <div class="q" id="question"></div>
-    <div class="stat"><span><span class="live" id="live"></span><span id="livet">Connecting</span></span><span><b id="count">0</b> messages heard</span></div>
+    <div class="stat"><span><span class="live" id="live"></span><span id="livet">Connecting</span></span><span><b id="count">0</b> answers received</span></div>
   </header>
 
   <div class="cols">
@@ -85,8 +85,8 @@ header .q{font-family:var(--display);font-size:1.8rem;line-height:1.1;flex:1 1 3
         <p class="url" id="url"></p>
       </div>
       <div class="panel">
-        <h2>The messenger’s log</h2>
-        <p class="sub">Bell numbers only. Newest first.</p>
+        <h2>Encoded answers</h2>
+        <p class="sub">Scrambled codes only. Newest first.</p>
         <ol class="log" id="log"></ol>
       </div>
     </div>
@@ -94,19 +94,19 @@ header .q{font-family:var(--display);font-size:1.8rem;line-height:1.1;flex:1 1 3
     <div class="stack">
       <div class="panel" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">
         <div>
-          <h2>The Duke’s office</h2>
+          <h2>Results</h2>
           <p class="sub" id="rule"></p>
         </div>
-        <button class="btn primary" id="reveal" aria-pressed="false">Decode the log</button>
+        <button class="btn primary" id="reveal" aria-pressed="false">Decode the answers</button>
       </div>
       <div class="panel veil" id="veil">
-        <p>Only the Duke’s office knows how the strings cross. Until it decodes the log, the room sees only bells.</p>
+        <p>Answers arrive scrambled: only the organisers know how the strings cross. Until they are decoded, the room sees only codes.</p>
       </div>
-      <div id="duke" hidden class="stack">
-        <div class="panel"><h2>Counted in the ledger</h2><div class="rank" id="rank"></div></div>
+      <div id="results" hidden class="stack">
+        <div class="panel"><h2>Top feedback</h2><div class="rank" id="rank"></div></div>
         <div class="grid2">
           <div class="panel"><h2>Opinion on</h2><div class="rank" id="bySubject"></div></div>
-          <div class="panel"><h2>Who spoke</h2><div class="rank" id="byWho"></div></div>
+          <div class="panel"><h2>Who answered</h2><div class="rank" id="byWho"></div></div>
           <div class="panel"><h2>How much it matters</h2><div class="rank" id="byGravity"></div></div>
           <div class="panel"><h2>Feeling</h2><div class="rank" id="byFeeling"></div></div>
         </div>
@@ -124,7 +124,7 @@ header .q{font-family:var(--display);font-size:1.8rem;line-height:1.1;flex:1 1 3
 const $=s=>document.querySelector(s);
 const {ROMAN,on,dec,meaning,STATUS,SUBJECTS,GRAVITY,FEELING,THRESHOLD}=VOX;
 $('#question').textContent=VOX.QUESTION;
-$('#rule').textContent=`A critique reaches the Duke when it is mentioned more than ${THRESHOLD} times.`;
+$('#rule').textContent=`A point is highlighted when more than ${THRESHOLD} people raise it.`;
 
 /* QR of the phone page: the folder this screen is served from */
 const phoneURL=location.origin+location.pathname.replace(/[^/]*$/,'');
@@ -150,7 +150,7 @@ const tally=(labels,counts)=>labels.map(l=>[l,counts[l]||0]);
 function render(){
   const list=[...msgs.values()].sort((a,b)=>b.time-a.time);
   $('#count').textContent=list.length;
-  $('#log').innerHTML=list.length?list.slice(0,40).map(m=>`<li class="${fresh.has(m.id)?'new':''}">${m.bells.map(b=>on(b).map(j=>ROMAN[j]).join('+')).join(' · ')}</li>`).join(''):'<li>Waiting for the first message…</li>';
+  $('#log').innerHTML=list.length?list.slice(0,40).map(m=>`<li class="${fresh.has(m.id)?'new':''}">${m.bells.map(b=>on(b).map(j=>ROMAN[j]).join('+')).join(' · ')}</li>`).join(''):'<li>Waiting for the first answer…</li>';
   if(!revealed)return;
 
   const c={detail:{},subject:{},who:{},gravity:{},feeling:{}};let bad=0;
@@ -165,12 +165,12 @@ function render(){
   const full=(labels,counts)=>{const e=tally(labels,counts).sort((a,b)=>b[1]-a[1]);return [e,e.length?Math.max(1,e[0][1]):1]};
   [['#bySubject',SUBJECTS.map(s=>s.label),c.subject],['#byWho',STATUS.map(s=>s.label),c.who],['#byGravity',GRAVITY.map(s=>s.label),c.gravity],['#byFeeling',FEELING.map(s=>s.label),c.feeling]]
     .forEach(([sel,labels,counts])=>{const [e,mx]=full(labels,counts);bars($(sel),e,mx,null)});
-  $('#discard').textContent=bad?`${bad} line${bad>1?'s were':' was'} discarded: incomplete or not on the board.`:'';
+  $('#discard').textContent=bad?`${bad} line${bad>1?'s were':' was'} discarded: incomplete or invalid.`:'';
 }
 $('#reveal').addEventListener('click',e=>{
   revealed=!revealed;e.currentTarget.setAttribute('aria-pressed',revealed);
-  e.currentTarget.textContent=revealed?'Hide the decoding':'Decode the log';
-  $('#veil').hidden=revealed;$('#duke').hidden=!revealed;render();
+  e.currentTarget.textContent=revealed?'Hide the results':'Decode the answers';
+  $('#veil').hidden=revealed;$('#results').hidden=!revealed;render();
 });
 $('#reset').addEventListener('click',()=>{clearedAt=Date.now()/1000;try{localStorage.setItem(KEY,String(clearedAt))}catch(e){}msgs.clear();render()});
 
