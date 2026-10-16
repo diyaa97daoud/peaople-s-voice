@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Corda: the Duke's office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Presenter screen: QR and messenger's log on the left, the Duke's office (decoded) on the right. */
+:root{
+  color-scheme:light;
+  --bg:#f3f2ee; --panel:#ffffff; --panel2:#f7f5f0; --line:#ddd8cd;
+  --ink:#1f1d1a; --dim:#6b665c; --accent:#8a5c0e; --accent-soft:#fbf1dc; --ok:#2f7d3a; --bad:#b4432f;
+  --log-bg:#efe4c6; --log-ink:#2b2214; --bar:#cfc6b2; --bar-hot:#9c6a12;
+  --display:"Grenze Gotisch", Georgia, serif;
+  --body:"Alegreya", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  color-scheme:dark;
+  --bg:#1a1814; --panel:#24211c; --panel2:#2c2823; --line:#3b362e;
+  --ink:#f0ebe0; --dim:#aaa293; --accent:#e0a63a; --accent-soft:#3a2f17; --ok:#6fc07a; --bad:#e8826c;
+  --log-bg:#3a3322; --log-ink:#efe4c6; --bar:#4a443a; --bar-hot:#e0a63a}}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:20px;line-height:1.4;margin:0;padding-block:20px 40px;padding-left:max(20px, env(safe-area-inset-left, 0px));padding-right:max(20px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1400px;margin:0 auto;display:grid;gap:18px}
+h1,h2{font-family:var(--display);font-weight:500;margin:0}
+h1{font-size:2.4rem;color:var(--accent);line-height:1}
+h2{font-size:1.5rem;line-height:1.1}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sub{color:var(--dim)}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px}
+header .q{font-family:var(--display);font-size:1.8rem;line-height:1.1;flex:1 1 360px}
+.stat{font-family:var(--mono);font-size:.9rem;color:var(--dim);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.stat b{color:var(--ink);font-size:1.4rem}
+.live{display:inline-block;width:.7em;height:.7em;border-radius:50%;background:var(--bad);margin-right:6px}
+.live.on{background:var(--ok)}
+.cols{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
+.stack{display:grid;gap:18px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px;min-width:0;display:grid;gap:10px}
+.qrbox{background:#fff;padding:14px;border-radius:4px;line-height:0;justify-self:start}
+.url{font-family:var(--mono);font-size:.78rem;color:var(--dim);overflow-wrap:anywhere}
+.log{background:var(--log-bg);color:var(--log-ink);border-radius:3px;padding:12px 14px;margin:0;list-style:none;font-family:var(--mono);font-size:.82rem;display:grid;gap:4px;max-height:360px;overflow:auto}
+.log li{overflow-wrap:anywhere}
+.log li.new{font-weight:700}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:10px 18px;min-height:44px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+.btn.quiet{border-color:transparent;background:none;color:var(--dim);text-decoration:underline;padding:6px 8px;min-height:36px;font-size:.85rem}
+.rank{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,16em) minmax(0,1fr) 2.5em;gap:12px;align-items:center}
+.row i{display:block;height:14px;border-radius:2px;background:var(--bar);transition:width .4s}
+.row.hot i{background:var(--bar-hot)}
+.row .c{font-family:var(--mono);text-align:right}
+.row.hot span:first-child{font-weight:700}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}.row{grid-template-columns:minmax(0,1fr) 2.5em}.row i{grid-column:1/-1;order:3}}
+.empty{color:var(--dim);font-style:italic}
+.veil{min-height:320px;align-content:center;justify-items:start}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>La Corda</h1>
+      <p class="sub">The Duke asks</p>
+    </div>
+    <div class="q" id="question"></div>
+    <div class="stat"><span><span class="live" id="live"></span><span id="livet">Connecting</span></span><span><b id="count">0</b> messages heard</span></div>
+  </header>
+
+  <div class="cols">
+    <div class="stack">
+      <div class="panel">
+        <h2>Scan to answer</h2>
+        <div class="qrbox" id="qrbox"></div>
+        <p class="url" id="url"></p>
+      </div>
+      <div class="panel">
+        <h2>The messenger’s log</h2>
+        <p class="sub">Bell numbers only. Newest first.</p>
+        <ol class="log" id="log"></ol>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <h2>The Duke’s office</h2>
+          <p class="sub" id="rule"></p>
+        </div>
+        <button class="btn primary" id="reveal" aria-pressed="false">Decode the log</button>
+      </div>
+      <div class="panel veil" id="veil">
+        <p>Only the Duke’s office knows how the strings cross. Until it decodes the log, the room sees only bells.</p>
+      </div>
+      <div id="duke" hidden class="stack">
+        <div class="panel"><h2>Counted in the ledger</h2><div class="rank" id="rank"></div></div>
+        <div class="grid2">
+          <div class="panel"><h2>Opinion on</h2><div class="rank" id="bySubject"></div></div>
+          <div class="panel"><h2>Who spoke</h2><div class="rank" id="byWho"></div></div>
+          <div class="panel"><h2>How much it matters</h2><div class="rank" id="byGravity"></div></div>
+          <div class="panel"><h2>Feeling</h2><div class="rank" id="byFeeling"></div></div>
+        </div>
+        <p class="sub" id="discard"></p>
+      </div>
+      <div><button class="btn quiet" id="reset">Clear the screen (this device only)</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="vox.js"></script>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const {ROMAN,on,dec,meaning,STATUS,SUBJECTS,GRAVITY,FEELING,THRESHOLD}=VOX;
+$('#question').textContent=VOX.QUESTION;
+$('#rule').textContent=`A critique reaches the Duke when it is mentioned more than ${THRESHOLD} times.`;
+
+/* QR of the phone page: the folder this screen is served from */
+const phoneURL=location.origin+location.pathname.replace(/[^/]*$/,'');
+$('#url').textContent=phoneURL;
+if(typeof QRCode!=='undefined'){try{new QRCode($('#qrbox'),{text:phoneURL,width:260,height:260,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+else $('#qrbox').hidden=true;
+
+const KEY='vox-cleared-'+VOX.TOPIC;
+let clearedAt=0;try{clearedAt=Number(localStorage.getItem(KEY))||0}catch(e){}
+const msgs=new Map();let revealed=false,fresh=new Set(),timer=null;
+
+VOX.listen(m=>{
+  if(m.time<clearedAt||msgs.has(m.id))return;
+  msgs.set(m.id,m);fresh.add(m.id);setTimeout(()=>{fresh.delete(m.id);schedule()},4000);schedule();
+},ok=>{$('#live').classList.toggle('on',ok);$('#livet').textContent=ok?'Listening':'Reconnecting'});
+
+const schedule=()=>{if(!timer)timer=setTimeout(()=>{timer=null;render()},150)};
+const bars=(el,entries,max,hotAt)=>{
+  el.innerHTML=entries.length?entries.map(([k,n])=>`<div class="row${hotAt!=null&&n>hotAt?' hot':''}"><span>${k}</span><i style="width:${max?n/max*100:0}%"></i><span class="c">${n}</span></div>`).join(''):'<p class="empty">Nothing yet.</p>';
+};
+const tally=(labels,counts)=>labels.map(l=>[l,counts[l]||0]);
+
+function render(){
+  const list=[...msgs.values()].sort((a,b)=>b.time-a.time);
+  $('#count').textContent=list.length;
+  $('#log').innerHTML=list.length?list.slice(0,40).map(m=>`<li class="${fresh.has(m.id)?'new':''}">${m.bells.map(b=>on(b).map(j=>ROMAN[j]).join('+')).join(' · ')}</li>`).join(''):'<li>Waiting for the first message…</li>';
+  if(!revealed)return;
+
+  const c={detail:{},subject:{},who:{},gravity:{},feeling:{}};let bad=0;
+  list.forEach(m=>{
+    const mm=meaning(m.bells.map(dec));
+    if(!mm.every(Boolean)){bad++;return}
+    const k=`${mm[1]} · ${mm[2]}`;
+    c.detail[k]=(c.detail[k]||0)+1;c.who[mm[0]]=(c.who[mm[0]]||0)+1;c.subject[mm[1]]=(c.subject[mm[1]]||0)+1;c.gravity[mm[3]]=(c.gravity[mm[3]]||0)+1;c.feeling[mm[4]]=(c.feeling[mm[4]]||0)+1;
+  });
+  const top=Object.entries(c.detail).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  bars($('#rank'),top,top.length?top[0][1]:1,THRESHOLD);
+  const full=(labels,counts)=>{const e=tally(labels,counts).sort((a,b)=>b[1]-a[1]);return [e,e.length?Math.max(1,e[0][1]):1]};
+  [['#bySubject',SUBJECTS.map(s=>s.label),c.subject],['#byWho',STATUS.map(s=>s.label),c.who],['#byGravity',GRAVITY.map(s=>s.label),c.gravity],['#byFeeling',FEELING.map(s=>s.label),c.feeling]]
+    .forEach(([sel,labels,counts])=>{const [e,mx]=full(labels,counts);bars($(sel),e,mx,null)});
+  $('#discard').textContent=bad?`${bad} line${bad>1?'s were':' was'} discarded: incomplete or not on the board.`:'';
+}
+$('#reveal').addEventListener('click',e=>{
+  revealed=!revealed;e.currentTarget.setAttribute('aria-pressed',revealed);
+  e.currentTarget.textContent=revealed?'Hide the decoding':'Decode the log';
+  $('#veil').hidden=revealed;$('#duke').hidden=!revealed;render();
+});
+$('#reset').addEventListener('click',()=>{clearedAt=Date.now()/1000;try{localStorage.setItem(KEY,String(clearedAt))}catch(e){}msgs.clear();render()});
+
+render();
+setTimeout(()=>{if(!$('#live').classList.contains('on'))$('#livet').textContent='Waiting for the channel'},6000);
+})();
+</script>
+</body>
+</html>
